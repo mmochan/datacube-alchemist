@@ -48,24 +48,39 @@ def run_many(config_file, expressions, environment=None, limit=None):
     client = setup_dask_client(alchemist.config)
     execute_with_dask(client, tasks)
 
+def is_uuid(value):
+    from uuid import UUID
+    try:
+        UUID(my_uuid)
+        return True
+    except ValueError:
+        return False
 
 @cli2.command()
 @click.option('--environment', '-E',
               help='Name of the datacube environment to connect to.')
 @click.argument('config_file')
-@click.argument('input_dataset')
+@click.argument('input_dataset',
+              help='May be a URL, a file path or a dataset id')
 def run_one(config_file, input_dataset, environment=None):
+    """
+    Test run against a single dataset
+    """
     alchemist = Alchemist(config_file=config_file, dc_env=environment)
 
-    if '://' in input_dataset:
-        # Smells like a url
-        input_url = input_dataset
-    else:
-        # Treat the input as a local file path
-        input_url = Path(input_dataset).as_uri()
-
     dc = Datacube(env=environment)
-    ds = dc.index.datasets.get_datasets_for_location(input_url)
+
+    if is_uuid(input_dataset):
+        ds = dc.index.datasets.get(input_dataset)
+    else:  # String hopefully specifies a filename or url
+        if '://' in input_dataset:
+            # Smells like a url
+            input_url = input_dataset
+        else:
+            # Treat the input as a local file path
+            input_url = Path(input_dataset).absolute().as_uri()
+
+        ds = dc.index.datasets.get_datasets_for_location(input_url)
 
     task = alchemist.generate_task(ds)
     execute_task(task)
