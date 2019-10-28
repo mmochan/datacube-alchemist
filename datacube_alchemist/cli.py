@@ -60,11 +60,12 @@ def is_uuid(value):
 @click.option('--environment', '-E',
               help='Name of the datacube environment to connect to.')
 @click.argument('config_file')
-@click.argument('input_dataset',
-              help='May be a URL, a file path or a dataset id')
+@click.argument('input_dataset')
 def run_one(config_file, input_dataset, environment=None):
     """
     Test run against a single dataset
+
+    INPUT_DATASET may be a URL, a file path or a dataset ID
     """
     alchemist = Alchemist(config_file=config_file, dc_env=environment)
 
