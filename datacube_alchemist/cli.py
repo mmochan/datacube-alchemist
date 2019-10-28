@@ -51,7 +51,7 @@ def run_many(config_file, expressions, environment=None, limit=None):
 def is_uuid(value):
     from uuid import UUID
     try:
-        UUID(my_uuid)
+        UUID(value)
         return True
     except ValueError:
         return False
