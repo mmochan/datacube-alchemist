@@ -1,12 +1,11 @@
-from pathlib import Path
-
 import sys
 import time
+from pathlib import Path
 
-import click
-import structlog
 import boto3
+import click
 import cloudpickle
+import structlog
 
 from datacube import Datacube
 from datacube.ui import click as ui
@@ -48,6 +47,7 @@ def run_many(config_file, expressions, environment=None, limit=None):
     client = setup_dask_client(alchemist.config)
     execute_with_dask(client, tasks)
 
+
 def is_uuid(value):
     from uuid import UUID
     try:
@@ -55,6 +55,7 @@ def is_uuid(value):
         return True
     except ValueError:
         return False
+
 
 @cli2.command()
 @click.option('--environment', '-E',
