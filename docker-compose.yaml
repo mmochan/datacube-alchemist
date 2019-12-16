@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:10.3
+    environment:
+      - POSTGRES_DB=opendatacube
+      - POSTGRES_PASSWORD=opendatacubepassword
+      - POSTGRES_USER=opendatacube
+    restart: always
+  alchemist:
+    build:
+      context: .
+      dockerfile: DockerfileDev
+    environment:
+      - DB_HOSTNAME=postgres
+      - DB_USERNAME=opendatacube
+      - DB_PASSWORD=opendatacubepassword
+      - DB_DATABASE=opendatacube
+      - AWS_ACCESS_KEY_ID=${ODC_ACCESS_KEY}
+      - AWS_SECRET_ACCESS_KEY=${ODC_SECRET_KEY}
+    volumes:
+      - ./:/opt/alchemist
+    tty: true

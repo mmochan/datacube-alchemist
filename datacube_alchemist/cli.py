@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import time
 from pathlib import Path
@@ -66,16 +68,24 @@ def run_one(config_file, input_dataset, environment=None):
     """
     alchemist = Alchemist(config_file=config_file, dc_env=environment)
 
-    if '://' in input_dataset:
-        # Smells like a url
-        input_url = input_dataset
-    else:
-        # Treat the input as a local file path
-        input_url = Path(input_dataset).as_uri()
-
     dc = Datacube(env=environment)
-    ds = dc.index.datasets.get_datasets_for_location(input_url)
+    try:
+        ds = dc.index.datasets.get(input_dataset)
+    except ValueError as e:
+        _LOG.info("Couldn't find dataset with ID={} with exception {} trying by URL".format(
+            input_dataset, e
+        ))
+        # Couldn't find a dataset by ID, try something
+        if '://' in input_dataset:
+            # Smells like a url
+            input_url = input_dataset
+        else:
+            # Treat the input as a local file path
+            input_url = Path(input_dataset).as_uri()
 
+        ds = dc.index.datasets.get_datasets_for_location(input_url)
+
+    # Currently this doesn't work by URL... TODO: fixme!
     task = alchemist.generate_task(ds)
     execute_task(task)
 
