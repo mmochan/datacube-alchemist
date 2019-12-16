@@ -1,0 +1,9 @@
+[submodule "codependency/wofs"]
+	path = codependency/wofs
+	url = git@github.com:GeoscienceAustralia/wofs.git
+[submodule "codependency/fc"]
+	path = codependency/fc
+	url = git@github.com:GeoscienceAustralia/fc.git
+[submodule "codependency/eo-datasets"]
+	path = codependency/eo-datasets
+	url = git@github.com:GeoscienceAustralia/eo-datasets.git
