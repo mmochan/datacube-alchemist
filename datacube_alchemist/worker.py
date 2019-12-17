@@ -149,7 +149,7 @@ def execute_task(task: AlchemistTask):
         if task.settings.output.preview_image is not None:
             p.write_thumbnail(*task.settings.output.preview_image)
 
-        dataset_id, metadata_path = p.done()
+        dataset_id, metadata_path = p.done(validate_correctness=False)
 
     return dataset_id, metadata_path
 
@@ -226,5 +226,7 @@ def execute_pickled_task(pickled_task):
     # make location local if the location is S3
     task.settings.output.location = s3ul.location
     _LOG.info("Found task to process: {}".format(task))
-    execute_task(task)
+    dataset_id, metadata_path = execute_task(task)
     s3ul.upload_if_needed()
+
+    return dataset_id, metadata_path

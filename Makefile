@@ -9,6 +9,9 @@ push:
 	docker build . --tag opendatacube/datacube-alchemist
 	docker push opendatacube/datacube-alchemist
 
+build:
+	docker-compose build
+
 up:
 	docker-compose up
 
@@ -30,8 +33,8 @@ add-failed-scene:
 
 run-one:
 	docker-compose run alchemist \
-		/opt/alchemist/cli.py run_one \
-		/opt/alchemist/examples/fc_config_sentinel2b_test.yaml 95f69a40-ba51-43fd-b309-2a2a346bb485
+		./datacube_alchemist/cli.py run_one \
+		examples/fc_config_sentinel2b_test.yaml 95f69a40-ba51-43fd-b309-2a2a346bb485
 
 shell:
 	docker-compose run alchemist bash

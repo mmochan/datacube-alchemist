@@ -11,7 +11,7 @@ specification:
   override_product_family: ard # The relationship of the source dataset to the newly derived dataset
   basis: nbar_green
 
-  transform: fc.virtualproduct.FakeFractionalCover
+  transform: fc.virtualproduct.FractionalCover
   transform_args:
     regression_coefficients:
       #  These coefficients are for Sentinel 2
@@ -39,7 +39,7 @@ specification:
         - 0.9688
 
 output:
-  location: '/tmp'
+  location: '/tmp/alchemist'
   dtype: uint8 # single value for all bands
   nodata: 255 # single value for all bands
   preview_image: [bs, pv, npv]

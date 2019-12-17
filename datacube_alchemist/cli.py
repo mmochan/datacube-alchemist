@@ -165,14 +165,16 @@ def pullfromqueue(message_queue, sqs_timeout=None):
     if len(messages) > 0:
         message = messages[0]
         pickled_task = message.message_attributes['pickled_task']['BinaryValue']
-        execute_pickled_task(pickled_task)
+        dataset_id, metadata_path = execute_pickled_task(pickled_task)
 
+        # TODO: see if we can catch failed tasts that return and don't delete the message if they failed
         message.delete()
         _LOG.info("SQS message deleted")
     else:
         _LOG.warning("No messages!")
 
 
+# TODO: don't repeat contents of this function in the above function
 @cli.command()
 @click.option('--message_queue', '-M')
 @click.option('--sqs_timeout', '-S', type=int,
@@ -201,7 +203,9 @@ def processqueue(message_queue, sqs_timeout=None):
         else:
             message = messages[0]
             pickled_task = message.message_attributes['pickled_task']['BinaryValue']
-            execute_pickled_task(pickled_task)
+            dataset_id, metadata_path = execute_pickled_task(pickled_task)
+
+            # TODO: see if we can catch failed tasts that return and don't delete the message if they failed
 
             message.delete()
             _LOG.info("SQS message deleted")

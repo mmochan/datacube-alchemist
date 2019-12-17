@@ -17,8 +17,18 @@ services:
       - DB_USERNAME=opendatacube
       - DB_PASSWORD=opendatacubepassword
       - DB_DATABASE=opendatacube
-      - AWS_ACCESS_KEY_ID=${ODC_ACCESS_KEY}
-      - AWS_SECRET_ACCESS_KEY=${ODC_SECRET_KEY}
+      # - AWS_ACCESS_KEY_ID=${ODC_ACCESS_KEY}
+      # - AWS_SECRET_ACCESS_KEY=${ODC_SECRET_KEY}
     volumes:
-      - ./:/opt/alchemist
+      - ./datacube_alchemist:/opt/alchemist/datacube_alchemist
+      - ./examples:/opt/alchemist/examples
+      - ./codependency:/opt/alchemist/codependency
+      - /tmp/alchemist:/tmp/alchemist
+    command:
+      bash -c " \
+        pip3 install -e codependency/eo-datasets \
+        pip3 install -e codependency/fc \
+        pip3 install -e codependency/wofs \
+        tail /dev/null
+      "
     tty: true
