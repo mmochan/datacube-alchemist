@@ -24,9 +24,10 @@ COPY . $APPDIR
 # RUN pip3 install . \
 #   && rm -rf $HOME/.cache/pip
 
-RUN pip3 install -e codependency/eo-datasets/
-RUN pip3 install -e codependency/fc/
-RUN pip3 install -e codependency/wofs/
+# This is done in the run command now
+# RUN pip3 install -e codependency/eo-datasets/
+# RUN pip3 install -e codependency/fc/
+# RUN pip3 install -e codependency/wofs/
 
 RUN pip3 install -e .
 
