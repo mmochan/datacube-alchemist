@@ -76,6 +76,13 @@ def execute_with_dask(client, tasks: Iterable[AlchemistTask]):
     _LOG.info('completed')
 
 
+def execute_vp_task(task: AlchemistTask):
+    from datacube.virtual import construct
+    vp = construct(task.settings.specification)
+
+    vdbag = vp.query(dc=None, id=task.dataset.id)
+
+
 def execute_task(task: AlchemistTask):
     log = _LOG.bind(task=task)
     transform = _import_transform(task.settings.specification.transform)
