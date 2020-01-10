@@ -92,23 +92,23 @@ def addtoqueue(config_file, message_queue, expressions, environment=None, limit=
     Search for Datasets and enqueue Tasks into an AWS SQS Queue for later processing.
     """
 
-    def _push_messages(queue, messages):
-        response = queue.send_messages(Entries=messages)
-        return response
-
     _LOG.info("Start add to queue.")
     start_time = time.time()
     # Set up the queue
     sqs = boto3.resource('sqs')
     queue = sqs.get_queue_by_name(QueueName=message_queue)
 
+    def _push_messages(messages):
+        response = queue.send_messages(Entries=messages)
+        return response
+
     # Load Configuration file
     alchemist = Alchemist(config_file=config_file, dc_env=environment)
     tasks = alchemist.generate_tasks(expressions, limit=limit)
     messages = []
     sum_size = 0
-    count = -1
-    for count, task in enumerate(tasks):
+    count = 0
+    for count, task in enumerate(tasks, start=1):
         pickled_task = cloudpickle.dumps(task)
         msize = sys.getsizeof(pickled_task)
         sum_size += msize
@@ -123,14 +123,14 @@ def addtoqueue(config_file, message_queue, expressions, environment=None, limit=
         # And I'm adding messages until it's over a limit.
         # So I am conservative.
         if sum_size > 180000:
-            _ = _push_messages(queue, messages)
+            _push_messages(messages)
             _LOG.info("Pushed {} items. Total Att byte size of {}".format(count, sum_size))
             sum_size = 0
             messages = []
     # Push the final batch of messages
     if len(messages) >= 1:
-        _ = _push_messages(queue, messages)
-    _LOG.info("Ending. Pushed {} items in {:.2f}s.".format(count + 1, time.time() - start_time))
+        _push_messages(messages)
+    _LOG.info("Ending. Pushed {} items in {:.2f}s.".format(count, time.time() - start_time))
 
 
 @cli.command()
